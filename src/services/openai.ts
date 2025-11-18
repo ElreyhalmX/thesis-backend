@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-console.log("Gemini API Key:", process.env.GEMINI_API_KEY);
 
 interface Recipe {
   id: string;
