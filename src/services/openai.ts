@@ -36,7 +36,7 @@ CONTEXTO IMPORTANTE:
 - Ingredientes típicos venezolanos: ají dulce, auyama, plátano, topocho, arepa, caraotas, etc.
 
 TAREA:
-Genera exactamente 3 recetas venezolanas diferentes que:
+Genera hasta 10  recetas venezolanas diferentes que:
 1. Usen principalmente los ingredientes proporcionados
 2. Se puedan completar en ${cookingTime} minutos o menos
 3. Sean económicas y accesibles
