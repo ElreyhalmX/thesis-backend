@@ -23,9 +23,28 @@ export async function generateRecipes(
 ): Promise<Recipe[]> {
   console.log("ingredients", ingredients);
   console.log(" ");
-  const prompt = `Eres un asistente culinario especializado en cocina venezolana para estudiantes universitarios con recursos limitados.
+  const prompt = `Eres un asistente culinario experto.
 
-Ingredientes disponibles que el usuario agregó: ${ingredients.join(", ")}
+Ingredientes proporcionados por el usuario: ${ingredients.join(", ")}
+
+TAREA DE VALIDACIÓN (PRIORIDAD MÁXIMA):
+Analiza CUIDADOSAMENTE la lista de ingredientes del usuario.
+Si detectas CUALQUIER entrada que cumpla con alguna de estas condiciones:
+1. NO es un ingrediente comestible real (ej: "piedra", "cemento", "amor", "esperanza").
+2. Es una frase o texto aleatorio que no es un alimento.
+3. Es un objeto no comestible.
+4. Es un concepto abstracto.
+
+ENTONCES, DEBES RESPONDER ÚNICAMENTE CON ESTE JSON DE ERROR:
+{
+  "error": "INVALID_INGREDIENTS",
+  "message": "Uno de los ingredientes que agregó no es un ingrediente"
+}
+
+SI Y SOLO SI TODOS LOS INGREDIENTES SON VÁLIDOS, procede a generar las recetas siguiendo estas instrucciones:
+
+Eres un asistente culinario especializado en cocina venezolana para estudiantes universitarios con recursos limitados.
+
 Tiempo disponible: ${cookingTime} minutos
 
 CONDIMENTOS Y ADEREZOS BÁSICOS DISPONIBLES (NO AGREGAR A LA LISTA DEL USUARIO):
@@ -90,7 +109,7 @@ IMPORTANTE:
           role: "user",
           parts: [
             {
-              text: `Sistema: Eres un experto chef venezolano especializado en cocina práctica y económica para estudiantes universitarios. Siempre respondes con JSON válido sin formato markdown.\n\n${prompt}`,
+              text: `Sistema: Eres un experto chef venezolano. Siempre respondes con JSON válido sin formato markdown.\n\n${prompt}`,
             },
           ],
         },
@@ -103,7 +122,10 @@ IMPORTANTE:
     const content = result.response.text();
 
     const parsed = JSON.parse(content);
-    console.log("parsed: ", parsed);
+
+    if (parsed.error === "INVALID_INGREDIENTS") {
+      throw new Error("INVALID_INGREDIENTS");
+    }
 
     const recipes = (parsed.recipes || []).map(
       (recipe: any, index: number) => ({
@@ -120,7 +142,10 @@ IMPORTANTE:
     );
 
     return recipes;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "INVALID_INGREDIENTS") {
+      throw error;
+    }
     console.error("Gemini API Error:", error);
     throw new Error("Failed to generate recipes from Gemini");
   }

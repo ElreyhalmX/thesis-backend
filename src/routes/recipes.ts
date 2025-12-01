@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { generateRecipes } from '../services/openai.js'
-import { validateIngredients, validateCookingTime } from '../utils/validators.js'
+import { validateCookingTime, validateIngredients } from '../utils/validators.js'
 
 const router = Router()
 
@@ -24,8 +24,16 @@ router.post('/generate', async (req, res, next) => {
     const recipes = await generateRecipes(validatedIngredients, validatedTime)
     
     res.json({ recipes })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error generating recipes:', error)
+    
+    if (error.message === 'INVALID_INGREDIENTS') {
+      return res.status(400).json({
+        error: 'Invalid ingredients',
+        message: 'Uno de los ingredientes que agregó no es un ingrediente'
+      })
+    }
+
     next(error)
   }
 })
