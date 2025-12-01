@@ -25,24 +25,36 @@ export async function generateRecipes(
   console.log(" ");
   const prompt = `Eres un asistente culinario especializado en cocina venezolana para estudiantes universitarios con recursos limitados.
 
-Ingredientes disponibles: ${ingredients.join(", ")}
+Ingredientes disponibles que el usuario agregó: ${ingredients.join(", ")}
 Tiempo disponible: ${cookingTime} minutos
+
+CONDIMENTOS Y ADEREZOS BÁSICOS DISPONIBLES (NO AGREGAR A LA LISTA DEL USUARIO):
+- Sal
+- Aceite (vegetal o de oliva)
+- Pimienta negra
+- Comino
+- Agua
 
 CONTEXTO IMPORTANTE:
 - El estudiante vive solo y tiene conocimientos básicos de cocina
 - Presupuesto limitado
 - Servicios inestables (luz, agua, gas)
 - Necesita recetas prácticas y económicas
-- Ingredientes típicos venezolanos: ají dulce, auyama, plátano, topocho, arepa, caraotas, etc.
+
+INSTRUCCIÓN CRÍTICA - MUY IMPORTANTE:
+Las recetas DEBEN usar ÚNICAMENTE:
+1. Los ingredientes que el usuario agregó: ${ingredients.join(", ")}
+2. Los condimentos básicos listados arriba (sal, aceite, pimienta, comino, agua)
+
+NO INCLUYAS otros ingredientes que no estén en estas dos listas. Si no puedes hacer una receta con solo estos ingredientes, NO LA INCLUYAS.
 
 TAREA:
-Genera hasta 10  recetas venezolanas diferentes que:
-1. Usen principalmente los ingredientes proporcionados
+Genera hasta 10 recetas venezolanas diferentes que:
+1. Usen ÚNICAMENTE los ingredientes del usuario + condimentos básicos
 2. Se puedan completar en ${cookingTime} minutos o menos
 3. Sean económicas y accesibles
-4. Incluyan ingredientes comunes en Venezuela
-5. Tengan instrucciones claras y simples
-6. Incluyan tips para preservar alimentos y sustituir ingredientes
+4. Tengan instrucciones claras y simples
+5. Incluyan tips para preservar alimentos y sustituir ingredientes
 
 Responde ÚNICAMENTE con un JSON válido (sin markdown, sin bloques de código) en este formato exacto:
 {
@@ -65,7 +77,8 @@ IMPORTANTE:
 - El campo "difficulty" debe ser exactamente: "Fácil", "Intermedio", o "Avanzado"
 - Incluye cantidades específicas en los ingredientes
 - Las instrucciones deben ser pasos claros y numerados
-- Los tips deben ser prácticos para estudiantes venezolanos`;
+- Los tips deben ser prácticos para estudiantes venezolanos
+- NO INCLUYAS ingredientes que NO están en la lista de ingredientes del usuario`;
 
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
