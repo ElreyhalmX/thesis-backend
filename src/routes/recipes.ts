@@ -1,41 +1,48 @@
-import { Router } from 'express'
-import { generateRecipes } from '../services/openai.js'
-import { validateCookingTime, validateIngredients } from '../utils/validators.js'
+import { Router } from "express";
+import { supabase } from "../config/supabase.js";
+import { generateRecipes } from "../services/openai.js";
+import {
+  validateCookingTime,
+  validateIngredients,
+} from "../utils/validators.js";
 
-const router = Router()
+const router = Router();
 
-router.post('/generate', async (req, res, next) => {
+router.post("/generate", async (req, res, next) => {
   try {
-    const { ingredients, cookingTime } = req.body
+    const { ingredients, cookingTime } = req.body;
 
-    const validatedIngredients = validateIngredients(ingredients)
-    
+    const validatedIngredients = validateIngredients(ingredients);
+
     if (!validatedIngredients) {
-      return res.status(400).json({ 
-        error: 'Invalid ingredients',
-        message: 'Please provide a valid array of ingredients'
-      })
-    }
-
-    const validatedTime = validateCookingTime(cookingTime)
-
-    console.log(`Generating recipes for ${validatedIngredients.length} ingredients with ${validatedTime} minutes`)
-
-    const recipes = await generateRecipes(validatedIngredients, validatedTime)
-    
-    res.json({ recipes })
-  } catch (error: any) {
-    console.error('Error generating recipes:', error)
-    
-    if (error.message === 'INVALID_INGREDIENTS') {
       return res.status(400).json({
-        error: 'Invalid ingredients',
-        message: 'Uno de los ingredientes que agregó no es un ingrediente'
-      })
+        error: "Invalid ingredients",
+        message: "Please provide a valid array of ingredients",
+      });
     }
 
-    next(error)
-  }
-})
+    const validatedTime = validateCookingTime(cookingTime);
 
-export default router
+    console.log(
+      `Generating recipes for ${validatedIngredients.length} ingredients with ${validatedTime} minutes`
+    );
+
+    const recipes = await generateRecipes(validatedIngredients, validatedTime);
+    supabase.rpc("increment_recipes_generated", recipes.length);
+
+    res.json({ recipes });
+  } catch (error: any) {
+    console.error("Error generating recipes:", error);
+
+    if (error.message === "INVALID_INGREDIENTS") {
+      return res.status(400).json({
+        error: "Invalid ingredients",
+        message: "Uno de los ingredientes que agregó no es un ingrediente",
+      });
+    }
+
+    next(error);
+  }
+});
+
+export default router;
