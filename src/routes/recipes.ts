@@ -2,15 +2,16 @@ import { Router } from "express";
 import { supabase } from "../config/supabase.js";
 import { generateRecipes } from "../services/openai.js";
 import {
-  validateCookingTime,
-  validateIngredients,
+    validateCookingTime,
+    validateIngredients,
+    validatePortions,
 } from "../utils/validators.js";
 
 const router = Router();
 
 router.post("/generate", async (req, res, next) => {
   try {
-    const { ingredients, cookingTime } = req.body;
+    const { ingredients, cookingTime, portions } = req.body;
 
     const validatedIngredients = validateIngredients(ingredients);
 
@@ -22,12 +23,17 @@ router.post("/generate", async (req, res, next) => {
     }
 
     const validatedTime = validateCookingTime(cookingTime);
+    const validatedPortions = validatePortions(portions);
 
     console.log(
-      `Generating recipes for ${validatedIngredients.length} ingredients with ${validatedTime} minutes`
+      `Generating recipes for ${validatedIngredients.length} ingredients with ${validatedTime} minutes for ${validatedPortions} portions`
     );
 
-    const recipes = await generateRecipes(validatedIngredients, validatedTime);
+    const recipes = await generateRecipes(
+      validatedIngredients,
+      validatedTime,
+      validatedPortions
+    );
     supabase.rpc("increment_recipes_generated", {
       increment_by: recipes.length,
     });

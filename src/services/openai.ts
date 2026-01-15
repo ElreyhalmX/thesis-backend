@@ -19,7 +19,8 @@ interface Recipe {
 
 export async function generateRecipes(
   ingredients: string[],
-  cookingTime: number
+  cookingTime: number,
+  portions: number
 ): Promise<Recipe[]> {
   console.log("ingredients", ingredients);
   console.log(" ");
@@ -46,6 +47,7 @@ SI Y SOLO SI TODOS LOS INGREDIENTES SON VÁLIDOS, procede a generar las recetas 
 Eres un asistente culinario especializado en cocina venezolana para estudiantes universitarios con recursos limitados.
 
 Tiempo disponible: ${cookingTime} minutos
+Porciones a preparar: ${portions} personas
 
 CONDIMENTOS Y ADEREZOS BÁSICOS DISPONIBLES (NO AGREGAR A LA LISTA DEL USUARIO):
 - Sal
@@ -72,8 +74,9 @@ Genera hasta 10 recetas venezolanas diferentes que:
 1. Usen ÚNICAMENTE los ingredientes del usuario + condimentos básicos
 2. Se puedan completar en ${cookingTime} minutos o menos
 3. Sean económicas y accesibles
-4. Tengan instrucciones claras y simples
-5. Incluyan tips para preservar alimentos y sustituir ingredientes
+4. Sean para EXACTAMENTE ${portions} personas/porciones (ajusta las cantidades de los ingredientes para esta cantidad)
+5. Tengan instrucciones claras y simples
+6. Incluyan tips para preservar alimentos y sustituir ingredientes
 
 Responde ÚNICAMENTE con un JSON válido (sin markdown, sin bloques de código) en este formato exacto:
 {
@@ -136,7 +139,7 @@ IMPORTANTE:
         instructions: recipe.instructions || [],
         prepTime: recipe.prepTime || cookingTime,
         difficulty: recipe.difficulty || "Intermedio",
-        servings: recipe.servings || 2,
+        servings: recipe.servings || portions,
         tips: recipe.tips || [],
       })
     );

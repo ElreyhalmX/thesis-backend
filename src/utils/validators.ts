@@ -20,3 +20,10 @@ export function validateCookingTime(time: unknown): number {
   }
   return 30 // Default to 30 minutes
 }
+
+export function validatePortions(portions: unknown): number {
+  if (typeof portions === 'number' && portions > 0 && portions <= 20) {
+    return portions
+  }
+  return 2 // Default to 2 servings
+}
