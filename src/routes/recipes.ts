@@ -28,7 +28,9 @@ router.post("/generate", async (req, res, next) => {
     );
 
     const recipes = await generateRecipes(validatedIngredients, validatedTime);
-    supabase.rpc("increment_recipes_generated", recipes.length);
+    supabase.rpc("increment_recipes_generated", {
+      increment_by: recipes.length,
+    });
 
     res.json({ recipes });
   } catch (error: any) {
