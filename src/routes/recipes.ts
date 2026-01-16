@@ -53,4 +53,23 @@ router.post("/generate", async (req, res, next) => {
   }
 });
 
+router.post("/generate-plan", async (req, res, next) => {
+  try {
+    const { ingredients, portions } = req.body;
+    
+    // Basic validation
+    if (!Array.isArray(ingredients) || ingredients.length === 0) {
+      return res.status(400).json({ error: "No ingredients provided" });
+    }
+
+    // Call service
+    const plan = await generateWeeklyPlan(ingredients, Number(portions) || 1);
+    
+    res.json({ plan });
+  } catch (error) {
+    console.error("Error generating plan:", error);
+    next(error);
+  }
+});
+
 export default router;

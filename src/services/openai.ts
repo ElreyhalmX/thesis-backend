@@ -77,6 +77,7 @@ Genera hasta 10 recetas venezolanas diferentes que:
 4. Cada receta debe ser calculada para ${portions} personas (NO generar ${portions} recetas, sino hasta 10 recetas donde cada una alcance para ${portions} comensales).
 5. Tengan instrucciones claras y simples
 6. Incluyan tips para preservar alimentos y sustituir ingredientes
+7. Incluyan INFORMACIÓN NUTRICIONAL ESTIMADA por porción (calorías, proteínas, carbohidratos, grasas)
 
 Responde ÚNICAMENTE con un JSON válido (sin markdown, sin bloques de código) en este formato exacto:
 {
@@ -90,7 +91,13 @@ Responde ÚNICAMENTE con un JSON válido (sin markdown, sin bloques de código) 
       "prepTime": 25,
       "difficulty": "Fácil",
       "servings": 2,
-      "tips": ["Tip práctico 1", "Tip práctico 2"]
+      "tips": ["Tip práctico 1", "Tip práctico 2"],
+      "nutrition": {
+        "calories": 450,
+        "protein": "20g",
+        "carbs": "45g",
+        "fat": "15g"
+      }
     }
   ]
 }
@@ -100,7 +107,8 @@ IMPORTANTE:
 - Incluye cantidades específicas en los ingredientes
 - Las instrucciones deben ser pasos claros y numerados
 - Los tips deben ser prácticos para estudiantes venezolanos
-- NO INCLUYAS ingredientes que NO están en la lista de ingredientes del usuario`;
+- NO INCLUYAS ingredientes que NO están en la lista de ingredientes del usuario
+- La información nutricional es OBLIGATORIA`;
 
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
@@ -141,6 +149,7 @@ IMPORTANTE:
         difficulty: recipe.difficulty || "Intermedio",
         servings: recipe.servings || portions,
         tips: recipe.tips || [],
+        nutrition: recipe.nutrition || { calories: 0, protein: "0g", carbs: "0g", fat: "0g" },
       })
     );
 
@@ -151,5 +160,55 @@ IMPORTANTE:
     }
     console.error("Gemini API Error:", error);
     throw new Error("Failed to generate recipes from Gemini");
+  }
+}
+
+export async function generateWeeklyPlan(
+  ingredients: string[],
+  portions: number
+): Promise<any[]> {
+  const prompt = `Eres un experto planificador nutricional para estudiantes venezolanos.
+  
+  Ingredientes disponibles: ${ingredients.join(", ")}
+  Porciones: ${portions}
+
+  TAREA:
+  Genera un PLAN SEMANAL (Lunes a Viernes) para el ALMUERZO, usando PRINCIPALMENTE los ingredientes del usuario.
+  
+  REGLAS:
+  1. Puedes sugerir ingredientes comunes baratos adicionales si son necesarios (arroz, pasta, vegetales básicos).
+  2. Prioriza el NO desperdicio de los ingredientes listados.
+  3. Cada día debe tener un almuerzo distinto.
+  4. Formato JSON estricto.
+  
+  Responde con JSON formato:
+  {
+    "plan": [
+      {
+        "day": "Lunes",
+        "meal": "Nombre del plato",
+        "rationale": "Por qué es buena opción (ej: usa el pollo que está por vencer)",
+        "ingredientsNeeded": ["lista ingredientes"]
+      },
+      ... hasta Viernes
+    ]
+  }
+`;
+  
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: `Sistema: JSON Only.\n\n${prompt}` }] }],
+        generationConfig: { temperature: 0.7 }
+    });
+    
+    const content = result.response.text();
+    // Clean potential markdown code blocks if any
+    const cleanContent = content.replace(/```json/g, '').replace(/```/g, '');
+    const parsed = JSON.parse(cleanContent);
+    return parsed.plan || [];
+  } catch (error) {
+    console.error("Weekly Plan Error:", error);
+    return [];
   }
 }
