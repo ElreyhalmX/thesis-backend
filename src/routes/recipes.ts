@@ -34,7 +34,7 @@ router.post("/generate", async (req, res, next) => {
       validatedTime,
       validatedPortions
     );
-    supabase.rpc("increment_recipes_generated", {
+    await supabase.rpc("increment_recipes_generated", {
       increment_by: recipes.length,
     });
 

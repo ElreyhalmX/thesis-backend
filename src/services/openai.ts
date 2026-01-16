@@ -74,7 +74,7 @@ Genera hasta 10 recetas venezolanas diferentes que:
 1. Usen ÚNICAMENTE los ingredientes del usuario + condimentos básicos
 2. Se puedan completar en ${cookingTime} minutos o menos
 3. Sean económicas y accesibles
-4. Sean para EXACTAMENTE ${portions} personas/porciones (ajusta las cantidades de los ingredientes para esta cantidad)
+4. Cada receta debe ser calculada para ${portions} personas (NO generar ${portions} recetas, sino hasta 10 recetas donde cada una alcance para ${portions} comensales).
 5. Tengan instrucciones claras y simples
 6. Incluyan tips para preservar alimentos y sustituir ingredientes
 
