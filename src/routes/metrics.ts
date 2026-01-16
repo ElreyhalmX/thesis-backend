@@ -13,6 +13,11 @@ router.post("/like", async (req, res, next) => {
 });
 
 router.get("/stats", async (req, res, next) => {
+  // Disable caching to ensure fresh data
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+
   try {
     // 1. Get exact count of recipes (Reliable)
     const { count: recipesCount, error: recipesError } = await supabase
