@@ -167,30 +167,40 @@ export async function generateWeeklyPlan(
   ingredients: string[],
   portions: number
 ): Promise<any[]> {
+  /* New Prompt for Full Recipe Generation */
   const prompt = `Eres un experto planificador nutricional para estudiantes venezolanos.
   
   Ingredientes disponibles: ${ingredients.join(", ")}
   Porciones: ${portions}
 
   TAREA:
-  Genera un PLAN SEMANAL (Lunes a Viernes) para el ALMUERZO, usando PRINCIPALMENTE los ingredientes del usuario.
+  Genera un PLAN SEMANAL (Lunes a Viernes) para el ALMUERZO.
+  Para cada día, DEBES generar una RECETA COMPLETA detallada (no solo resumen).
   
   REGLAS:
-  1. Puedes sugerir ingredientes comunes baratos adicionales si son necesarios (arroz, pasta, vegetales básicos).
-  2. Prioriza el NO desperdicio de los ingredientes listados.
+  1. Puedes sugerir ingredientes comunes baratos adicionales.
+  2. Prioriza el NO desperdicio.
   3. Cada día debe tener un almuerzo distinto.
-  4. Formato JSON estricto.
   
   Responde con JSON formato:
   {
     "plan": [
       {
         "day": "Lunes",
-        "meal": "Nombre del plato",
-        "rationale": "Por qué es buena opción (ej: usa el pollo que está por vencer)",
-        "ingredientsNeeded": ["lista ingredientes"]
-      },
-      ... hasta Viernes
+        "recipe": {
+            "title": "Nombre",
+            "description": "Descrip...",
+            "ingredients": ["ing1", "ing2"],
+            "instructions": ["paso1", "paso2"],
+            "difficulty": "Fácil",
+            "prepTime": 30,
+            "servings": ${portions},
+            "tips": ["tip1"],
+            "nutrition": { "calories": 400, "protein": "20g", "carbs": "50g", "fat": "10g" }
+        },
+        "rationale": "Usa el pollo sobrante"
+      }
+      ... (Martes, Miércoles, Jueves, Viernes)
     ]
   }
 `;
@@ -198,12 +208,11 @@ export async function generateWeeklyPlan(
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const result = await model.generateContent({
-        contents: [{ role: "user", parts: [{ text: `Sistema: JSON Only.\n\n${prompt}` }] }],
+        contents: [{ role: "user", parts: [{ text: `Sistema: JSON Only. Full Recipes.\n\n${prompt}` }] }],
         generationConfig: { temperature: 0.7 }
     });
     
     const content = result.response.text();
-    // Clean potential markdown code blocks if any
     const cleanContent = content.replace(/```json/g, '').replace(/```/g, '');
     const parsed = JSON.parse(cleanContent);
     return parsed.plan || [];
