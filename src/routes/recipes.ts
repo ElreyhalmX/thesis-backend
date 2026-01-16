@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { supabase } from "../config/supabase.js";
-import { generateRecipes } from "../services/openai.js";
+import { generateRecipes, generateWeeklyPlan } from "../services/openai.js";
 import {
     validateCookingTime,
     validateIngredients,
