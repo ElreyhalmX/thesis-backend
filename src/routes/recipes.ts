@@ -65,6 +65,13 @@ router.post("/generate-plan", async (req, res, next) => {
     // Call service
     const plan = await generateWeeklyPlan(ingredients, Number(portions) || 1);
     
+    // Increment metrics for all recipes in the plan
+    if (plan && plan.length > 0) {
+      await supabase.rpc("increment_recipes_generated", {
+        increment_by: plan.length,
+      });
+    }
+
     res.json({ plan });
   } catch (error) {
     console.error("Error generating plan:", error);
