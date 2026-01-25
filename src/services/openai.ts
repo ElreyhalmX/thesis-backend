@@ -111,7 +111,7 @@ IMPORTANTE:
 - La información nutricional es OBLIGATORIA`;
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
     // const model = genAI.getGenerativeModel({ model: 'gemini-3.0-flash' })
 
     const result = await model.generateContent({
@@ -206,7 +206,7 @@ export async function generateWeeklyPlan(
 `;
   
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
     const result = await model.generateContent({
         contents: [{ role: "user", parts: [{ text: `Sistema: JSON Only. Full Recipes.\n\n${prompt}` }] }],
         generationConfig: { temperature: 0.7 }
