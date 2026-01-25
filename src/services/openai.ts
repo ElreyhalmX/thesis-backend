@@ -70,7 +70,7 @@ Las recetas DEBEN usar ÚNICAMENTE:
 NO INCLUYAS otros ingredientes que no estén en estas dos listas. Si no puedes hacer una receta con solo estos ingredientes, NO LA INCLUYAS.
 
 TAREA:
-Genera hasta 10 recetas venezolanas diferentes que:
+Genera hasta 6 recetas venezolanas diferentes que:
 1. Usen ÚNICAMENTE los ingredientes del usuario + condimentos básicos
 2. Se puedan completar en ${cookingTime} minutos o menos
 3. Sean económicas y accesibles
