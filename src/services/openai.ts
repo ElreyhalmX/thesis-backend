@@ -174,13 +174,13 @@ export async function generateWeeklyPlan(
   Porciones: ${portions}
 
   TAREA:
-  Genera un PLAN SEMANAL (Lunes a Viernes) para el ALMUERZO.
-  Para cada día, DEBES generar una RECETA COMPLETA detallada (no solo resumen).
+  Genera un PLAN SEMANAL de 5 días (Lunes a Viernes) específicamente para el ALMUERZO.
+  Debes generar EXACTAMENTE 5 recetas completas.
   
   REGLAS:
   1. Puedes sugerir ingredientes comunes baratos adicionales.
   2. Prioriza el NO desperdicio.
-  3. Cada día debe tener un almuerzo distinto.
+  3. Deben ser 5 almuerzos distintos, uno para cada día de la semana laboral.
   
   Responde con JSON formato:
   {
@@ -206,7 +206,7 @@ export async function generateWeeklyPlan(
 `;
   
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const result = await model.generateContent({
         contents: [{ role: "user", parts: [{ text: `Sistema: JSON Only. Full Recipes.\n\n${prompt}` }] }],
         generationConfig: { temperature: 0.7 }
