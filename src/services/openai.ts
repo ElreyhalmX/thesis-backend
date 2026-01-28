@@ -62,22 +62,29 @@ CONTEXTO IMPORTANTE:
 - Servicios inestables (luz, agua, gas)
 - Necesita recetas prácticas y económicas
 
-INSTRUCCIÓN CRÍTICA - MUY IMPORTANTE:
+INSTRUCCIÓN CRÍTICA DE GESTIÓN DE RECURSOS (MUY IMPORTANTE):
+1. USO ESTRICTO DE CANTIDADES: Si el usuario indica cantidades (ej: "200g de carne"), DEBES AJUSTAR la receta a esa cantidad exacta.
+2. "RENDIR" LOS INGREDIENTES: Tu objetivo principal es que la comida ALCANCE para ${portions} personas con lo que hay.
+   - Si hay POCOS ingredientes para la cantidad de personas (ej: 200g de carne para 5 personas), DEBES crear recetas donde el ingrediente se "estire" o "rinda" (ej: Carne molida con mucho vegetal, sopas, guisos aguados, arroz aliñado).
+   - NO inventes ingredientes extra para completar. Si falta comida, reduce el tamaño de la porción recomendada pero CUMPLE con alimentar a ${portions} personas de forma simbólica o ligera.
+   - Explica en los 'tips' cómo hiciste rendir el ingrediente (ej: "Se picó la carne muy pequeña para que se notara más").
+
+RESTRICCIONES:
 Las recetas DEBEN usar ÚNICAMENTE:
 1. Los ingredientes que el usuario agregó: ${ingredients.join(", ")}
-2. Los condimentos básicos listados arriba (sal, aceite, pimienta, comino, agua)
+2. Los condimentos básicos listados arriba.
 
-NO INCLUYAS otros ingredientes que no estén en estas dos listas. Si no puedes hacer una receta con solo estos ingredientes, NO LA INCLUYAS.
+NO INCLUYAS otros ingredientes.
 
 TAREA:
 Genera hasta 6 recetas venezolanas diferentes que:
-1. Usen ÚNICAMENTE los ingredientes del usuario + condimentos básicos
-2. Se puedan completar en ${cookingTime} minutos o menos
-3. Sean económicas y accesibles
-4. Cada receta debe ser calculada para ${portions} personas (NO generar ${portions} recetas, sino hasta 10 recetas donde cada una alcance para ${portions} comensales).
-5. Tengan instrucciones claras y simples
-6. Incluyan tips para preservar alimentos y sustituir ingredientes
-7. Incluyan INFORMACIÓN NUTRICIONAL ESTIMADA por porción (calorías, proteínas, carbohidratos, grasas)
+1. Usen ÚNICAMENTE los ingredientes del usuario + condimentos básicos.
+2. Se puedan completar en ${cookingTime} minutos o menos.
+3. Sean económicas y accesibles.
+4. CALCULADAS PARA ${portions} PERSONAS (Rindiendo los ingredientes al máximo si es necesario).
+5. Tengan instrucciones claras y simples.
+6. Incluyan tips para preservar alimentos y sustituir ingredientes.
+7. Incluyan INFORMACIÓN NUTRICIONAL ESTIMADA por porción (calorías, proteínas, carbohidratos, grasas).
 
 Responde ÚNICAMENTE con un JSON válido (sin markdown, sin bloques de código) en este formato exacto:
 {
@@ -85,13 +92,13 @@ Responde ÚNICAMENTE con un JSON válido (sin markdown, sin bloques de código) 
     {
       "id": "recipe-1",
       "title": "Nombre de la receta",
-      "description": "Descripción breve y atractiva en 1-2 oraciones",
-      "ingredients": ["ingrediente 1 con cantidad", "ingrediente 2 con cantidad"],
+      "description": "Descripción indicando cómo se rindieron los ingredientes si es necesario",
+      "ingredients": ["ingrediente 1 con cantidad ajustada", "ingrediente 2 con cantidad"],
       "instructions": ["Paso 1 detallado", "Paso 2 detallado"],
       "prepTime": 25,
       "difficulty": "Fácil",
-      "servings": 2,
-      "tips": ["Tip práctico 1", "Tip práctico 2"],
+      "servings": ${portions},
+      "tips": ["Tip sobre cómo se rindió el ingrediente", "Tip práctico 2"],
       "nutrition": {
         "calories": 450,
         "protein": "20g",
@@ -104,11 +111,11 @@ Responde ÚNICAMENTE con un JSON válido (sin markdown, sin bloques de código) 
 
 IMPORTANTE: 
 - El campo "difficulty" debe ser exactamente: "Fácil", "Intermedio", o "Avanzado"
-- Incluye cantidades específicas en los ingredientes
-- Las instrucciones deben ser pasos claros y numerados
-- Los tips deben ser prácticos para estudiantes venezolanos
-- NO INCLUYAS ingredientes que NO están en la lista de ingredientes del usuario
-- La información nutricional es OBLIGATORIA`;
+- Incluye cantidades específicas en los ingredientes usadas para las ${portions} personas.
+- Las instrucciones deben ser pasos claros y numerados.
+- Los tips deben ser prácticos para estudiantes venezolanos.
+- NO INCLUYAS ingredientes que NO están en la lista.
+- La información nutricional es OBLIGATORIA.`;
 
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
@@ -178,9 +185,10 @@ export async function generateWeeklyPlan(
   Debes generar EXACTAMENTE 5 recetas completas.
   
   REGLAS:
-  1. Puedes sugerir ingredientes comunes baratos adicionales.
-  2. Prioriza el NO desperdicio.
-  3. Deben ser 5 almuerzos distintos, uno para cada día de la semana laboral.
+  1.NO INCLUYAS ingredientes que NO están en la lista de ingredientes del usuario.
+  2. DEBES "RENDIR" LOS INGREDIENTES: Ajusta las porciones para que alcancen para ${portions} personas durante los 5 días. Si hay poca comida, crea platos donde el ingrediente principal se estire (sopas, arroces mixtos).
+  3. Prioriza el NO desperdicio.
+  4. Deben ser 5 almuerzos distintos, uno para cada día de la semana laboral.
   
   Responde con JSON formato:
   {
