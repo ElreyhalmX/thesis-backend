@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { requestLogger } from "./middleware/requestLogger.js";
+import imagesRouter from "./routes/images.js";
 import metricsRouter from "./routes/metrics.js";
 import recipesRouter from "./routes/recipes.js";
 
@@ -17,6 +18,7 @@ app.use(requestLogger);
 
 app.use("/api/recipes", recipesRouter);
 app.use("/api/metrics", metricsRouter);
+app.use("/api/images", imagesRouter);
 
 app.get("/api/health", (req, res) => {
   res.json({

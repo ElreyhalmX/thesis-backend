@@ -229,3 +229,36 @@ export async function generateWeeklyPlan(
     return [];
   }
 }
+
+import { GoogleGenAI } from "@google/genai";
+
+export async function generateRecipeImage(recipeTitle: string): Promise<string | null> {
+  const modelName = "gemini-2.5-flash-image"; 
+  
+  try {
+     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+     
+     const prompt = `Create a photorealistic, high-quality food photography image of a Venezuelan dish named: "${recipeTitle}". The image should look delicious, professional, and authentic, suitable for a recipe card.`;
+
+     const response = await ai.models.generateContent({
+       model: modelName,
+       contents: prompt,
+     });
+
+     // Check candidates for inline data
+     if (response.candidates && response.candidates[0].content.parts) {
+        for (const part of response.candidates[0].content.parts) {
+            if (part.inlineData && part.inlineData.data) {
+                // Return base64 data directly
+                // Format: "data:image/png;base64,....."
+                return `data:image/png;base64,${part.inlineData.data}`;
+            }
+        }
+     }
+     
+     return null;
+  } catch (error) {
+     console.error("Gemini Native Image Gen Error:", error);
+     return null;
+  }
+}
