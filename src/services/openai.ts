@@ -246,7 +246,7 @@ export async function generateRecipeImage(recipeTitle: string): Promise<string |
      });
 
      // Check candidates for inline data
-     if (response.candidates && response.candidates[0].content.parts) {
+     if (response.candidates?.[0]?.content?.parts) {
         for (const part of response.candidates[0].content.parts) {
             if (part.inlineData && part.inlineData.data) {
                 // Return base64 data directly
