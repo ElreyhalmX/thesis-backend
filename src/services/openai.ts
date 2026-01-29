@@ -77,14 +77,14 @@ Las recetas DEBEN usar ÚNICAMENTE:
 NO INCLUYAS otros ingredientes.
 
 TAREA:
-Genera hasta 6 recetas venezolanas diferentes que:
-1. Usen ÚNICAMENTE los ingredientes del usuario + condimentos básicos.
-2. Se puedan completar en ${cookingTime} minutos o menos.
-3. Sean económicas y accesibles.
-4. CALCULADAS PARA ${portions} PERSONAS (Rindiendo los ingredientes al máximo si es necesario).
-5. Tengan instrucciones claras y simples.
-6. Incluyan tips para preservar alimentos y sustituir ingredientes.
-7. Incluyan INFORMACIÓN NUTRICIONAL ESTIMADA por porción (calorías, proteínas, carbohidratos, grasas).
+Genera 1 receta venezolana que:
+1. Use ÚNICAMENTE los ingredientes del usuario + condimentos básicos.
+2. Se pueda completar en ${cookingTime} minutos o menos.
+3. Sea económica y accesible.
+4. CALCULADA PARA ${portions} PERSONAS (Rindiendo los ingredientes al máximo si es necesario).
+5. Tenga instrucciones claras y simples.
+6. Incluya tips para preservar alimentos y sustituir ingredientes.
+7. Incluya INFORMACIÓN NUTRICIONAL ESTIMADA por porción (calorías, proteínas, carbohidratos, grasas).
 
 Responde ÚNICAMENTE con un JSON válido (sin markdown, sin bloques de código) en este formato exacto:
 {
