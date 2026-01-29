@@ -231,6 +231,7 @@ export async function generateWeeklyPlan(
 }
 
 import { GoogleGenAI } from "@google/genai";
+import sharp from "sharp";
 
 export async function generateRecipeImage(recipeTitle: string): Promise<string | null> {
   const modelName = "gemini-2.5-flash-image"; 
@@ -243,19 +244,29 @@ export async function generateRecipeImage(recipeTitle: string): Promise<string |
      const response = await ai.models.generateContent({
        model: modelName,
        contents: prompt,
-       config: {
-           responseMimeType: 'image/jpeg',
-       }
      });
 
      // Check candidates for inline data
      if (response.candidates?.[0]?.content?.parts) {
         for (const part of response.candidates[0].content.parts) {
             if (part.inlineData && part.inlineData.data) {
-                // Return base64 data directly
-                // If the model honors JPEG request, the data is JPEG.
-                // We use 'image/jpeg' in the data URI.
-                return `data:image/jpeg;base64,${part.inlineData.data}`;
+                // Compression Step with Sharp
+                try {
+                    const originalBuffer = Buffer.from(part.inlineData.data, 'base64');
+                    
+                    const compressedBuffer = await sharp(originalBuffer)
+                        .resize(800) // Resize width to 800px (standard web size)
+                        .jpeg({ quality: 80, mozjpeg: true }) // Compress to JPEG 80%
+                        .toBuffer();
+
+                    const base64Compressed = compressedBuffer.toString('base64');
+                    return `data:image/jpeg;base64,${base64Compressed}`;
+
+                } catch (compressionError) {
+                    console.error("Compression Failed, returning original:", compressionError);
+                     // Fallback to original if sharp fails
+                    return `data:image/png;base64,${part.inlineData.data}`;
+                }
             }
         }
      }
