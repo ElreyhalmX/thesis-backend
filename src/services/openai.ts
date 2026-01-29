@@ -243,6 +243,9 @@ export async function generateRecipeImage(recipeTitle: string): Promise<string |
      const response = await ai.models.generateContent({
        model: modelName,
        contents: prompt,
+       config: {
+           responseMimeType: 'image/jpeg',
+       }
      });
 
      // Check candidates for inline data
@@ -250,8 +253,9 @@ export async function generateRecipeImage(recipeTitle: string): Promise<string |
         for (const part of response.candidates[0].content.parts) {
             if (part.inlineData && part.inlineData.data) {
                 // Return base64 data directly
-                // Format: "data:image/png;base64,....."
-                return `data:image/png;base64,${part.inlineData.data}`;
+                // If the model honors JPEG request, the data is JPEG.
+                // We use 'image/jpeg' in the data URI.
+                return `data:image/jpeg;base64,${part.inlineData.data}`;
             }
         }
      }
