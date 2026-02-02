@@ -72,7 +72,7 @@ NO asumas que el usuario tiene sal, agua o aceite. Si no están en la lista, NO 
 NO INCLUYAS otros ingredientes.
 
 TAREA:
-Genera hasta 6 recetas venezolanas que:
+Genera hasta 5 recetas venezolanas que:
 1. Use ÚNICAMENTE los ingredientes del usuario.
 2. Se pueda completar en ${cookingTime} minutos o menos.
 3. Sea económica y accesible.
