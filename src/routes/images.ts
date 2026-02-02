@@ -5,13 +5,13 @@ const router = Router();
 
 router.post("/generate", async (req, res) => {
   try {
-    const { title } = req.body;
+    const { title, ingredients } = req.body;
 
     if (!title) {
       return res.status(400).json({ error: "Recipe title is required" });
     }
 
-    const imageData = await generateRecipeImage(title);
+    const imageData = await generateRecipeImage(title, ingredients || []);
 
     if (!imageData) {
       return res.status(500).json({ error: "Failed to generate image" });

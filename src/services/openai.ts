@@ -49,12 +49,6 @@ Eres un asistente culinario especializado en cocina venezolana para estudiantes 
 Tiempo disponible: ${cookingTime} minutos
 Porciones a preparar: ${portions} personas
 
-CONDIMENTOS Y ADEREZOS BÁSICOS DISPONIBLES (NO AGREGAR A LA LISTA DEL USUARIO):
-- Sal
-- Aceite (vegetal o de oliva)
-- Pimienta negra
-- Comino
-- Agua
 
 CONTEXTO IMPORTANTE:
 - El estudiante vive solo y tiene conocimientos básicos de cocina
@@ -72,13 +66,14 @@ INSTRUCCIÓN CRÍTICA DE GESTIÓN DE RECURSOS (MUY IMPORTANTE):
 RESTRICCIONES:
 Las recetas DEBEN usar ÚNICAMENTE:
 1. Los ingredientes que el usuario agregó: ${ingredients.join(", ")}
-2. Los condimentos básicos listados arriba.
+
+NO asumas que el usuario tiene sal, agua o aceite. Si no están en la lista, NO LOS USES.
 
 NO INCLUYAS otros ingredientes.
 
 TAREA:
-Genera 1 receta venezolana que:
-1. Use ÚNICAMENTE los ingredientes del usuario + condimentos básicos.
+Genera hasta 6 recetas venezolanas que:
+1. Use ÚNICAMENTE los ingredientes del usuario.
 2. Se pueda completar en ${cookingTime} minutos o menos.
 3. Sea económica y accesible.
 4. CALCULADA PARA ${portions} PERSONAS (Rindiendo los ingredientes al máximo si es necesario).
@@ -233,13 +228,17 @@ export async function generateWeeklyPlan(
 import { GoogleGenAI } from "@google/genai";
 import sharp from "sharp";
 
-export async function generateRecipeImage(recipeTitle: string): Promise<string | null> {
+export async function generateRecipeImage(recipeTitle: string, ingredients: string[] = []): Promise<string | null> {
   const modelName = "gemini-2.5-flash-image"; 
   
   try {
      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
      
-     const prompt = `Create a photorealistic, high-quality food photography image of a Venezuelan dish named: "${recipeTitle}". The image should look delicious, professional, and authentic, suitable for a recipe card.`;
+     const ingredientsText = ingredients.length > 0 ? ` using ONLY these ingredients: ${ingredients.join(", ")}` : "";
+     
+     const prompt = `Create a photorealistic, high-quality food photography image of a Venezuelan dish named: "${recipeTitle}"${ingredientsText}. 
+     IMPORTANT: The dish must ONLY contain the listed ingredients. Do not add ingredients not listed. 
+     The image should look delicious, professional, and authentic, suitable for a recipe card.`;
 
      const response = await ai.models.generateContent({
        model: modelName,
