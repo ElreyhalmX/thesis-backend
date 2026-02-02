@@ -142,7 +142,7 @@ IMPORTANTE:
 
     const recipes = (parsed.recipes || []).map(
       (recipe: any, index: number) => ({
-        id: recipe.id || `recipe-${Date.now()}-${index}`,
+        id: recipe.id && recipe.id !== "recipe-1" ? recipe.id : `recipe-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         title: recipe.title || "Receta sin nombre",
         description: recipe.description || "",
         ingredients: recipe.ingredients || [],
@@ -184,6 +184,7 @@ export async function generateWeeklyPlan(
   2. DEBES "RENDIR" LOS INGREDIENTES: Ajusta las porciones para que alcancen para ${portions} personas durante los 5 días. Si hay poca comida, crea platos donde el ingrediente principal se estire (sopas, arroces mixtos).
   3. Prioriza el NO desperdicio.
   4. Deben ser 5 almuerzos distintos, uno para cada día de la semana laboral.
+  5.NO asumas que el usuario tiene condimentos. sal, agua o aceite. Si no están en la lista, NO LOS USES.
   
   Responde con JSON formato:
   {
